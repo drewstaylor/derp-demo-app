@@ -72,11 +72,21 @@ export default {
       {message: "Derpie has entered the chat"},
       {message: "You entered the chat"},
     );
+
+    // Submit questions using 'Enter' key
+    document.onkeypress = (e) => {
+      e = e || window.event;
+      const k = e.key;
+      if (k === 'Enter') {
+        if (!this.question || typeof this.question !== "string") return;
+        if (!this.question.length) return;
+        this.ask();
+      }
+    };
   },
   methods: {
     ask: async function () {
       this.loading = true;
-      // console.log("question", this.question);
       if (!this.question) return;
       let question = JSON.stringify(this.question);
       this.question = null;
@@ -86,7 +96,6 @@ export default {
         voice: this.voices.selected
       };
       let resp = await this.api.request.post('/', req);
-      // console.log('resp', resp);
       let d = (resp.data) ? resp.data : {};
       if (d.chat) {
         let userChatEntry = {
