@@ -191,10 +191,10 @@ export default {
   height: 100vh;
   overflow: hidden;
 }
-textarea:focus, input:focus, select:focus{
+textarea:focus, input:focus, select:focus {
     outline: none;
 }
-body{
+body {
   background-color: #8cccb5;
   height: 100vh;
   margin: 0px;
@@ -226,9 +226,9 @@ div.loading {
 div.loading span {
   content: "";
   -webkit-animation: loader 1.5s infinite;
-          animation: loader 1.5s infinite;
+  animation: loader 1.5s infinite;
   -webkit-animation-fill-mode: both;
-          animation-fill-mode: both;
+  animation-fill-mode: both;
   height: 8px;
   width: 8px;
   background: #0353E6;
@@ -239,12 +239,12 @@ div.loading span {
 }
 .loading span:nth-child(2) {
   -webkit-animation-delay: 0.2s;
-          animation-delay: 0.2s;
+  animation-delay: 0.2s;
   margin-left: 15px;
 }
 .loading span:nth-child(3) {
   -webkit-animation-delay: 0.4s;
-          animation-delay: 0.4s;
+  animation-delay: 0.4s;
   margin-left: 30px;
 }
 .chat-log, .chat-input {
@@ -274,15 +274,15 @@ div.loading span {
   z-index: 99;
 }
 .logo{
-    width: 128px;
-    height: 32px;
-    display: block;
-    background-image: url('/assets/logo.svg');
-    background-size: cover;
-    margin: auto 0;
-    margin-left: 16px;
+  width: 128px;
+  height: 32px;
+  display: block;
+  background-image: url('/assets/logo.svg');
+  background-size: cover;
+  margin: auto 0;
+  margin-left: 16px;
 }
-.chat-input{
+.chat-input {
 /*  border: 1px solid rgba(0, 0, 0, 0.08); */
   border-radius: 8px;
   margin: 16px;
@@ -293,7 +293,7 @@ div.loading span {
   right: 0;
   font-size: 14px;
 }
-.options{
+.options {
   margin-top: 16px;
   padding-bottom: 0;
   margin-left: 16px;
@@ -303,11 +303,11 @@ div.loading span {
   background-color: #fff;
   border-radius: 8px;
 }
-.h-flex{
+.h-flex {
   display: flex;
   flex-direction: horizontal;
 }
-.v-flex{
+.v-flex {
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -316,7 +316,7 @@ div.loading span {
   width: calc(100% - 32px);
   margin: auto;
 }
-select{
+select {
   border: none;
   background: none;
   width: calc(100% - 8px);
@@ -325,10 +325,10 @@ select{
   border-radius: 8px;
   cursor: pointer;
 }
-select:hover{
+select:hover {
   opacity: 0.5;
 }
-input{
+input {
   flex-grow: 1;
   padding-top: 0.5rem;
   padding-bottom: 0.5rem;
@@ -352,22 +352,22 @@ p.author.you {
 p.author.bot span, p.info {
   font-style: italic;
 }
-ul{
+ul {
   decoration: none;
   list-style-type: none;
   display: flex;
   flex-direction: horizontal;
 }
-li{
+li {
   color: #fff;
   
 }
-li a{
+li a {
   color: #fff;
   margin-left: 16px;
   margin-right: 16px;
 }
-.col-1{
+.col-1 {
   width: 25%;
   display:block;
   height: calc(100% - 80px);
@@ -377,13 +377,13 @@ li a{
   margin-left: 16px;
   overflow-y: scroll;
 }
-.col-2{
+.col-2 {
   width: 75%;
   display:block;
   position: relative;
   height: 100%;
 }
-.derp{
+.derp {
   width: calc(100% - 32px);
   margin: 16px;
   background-size: cover;
@@ -392,13 +392,13 @@ li a{
   background-position: center;
   aspect-ratio : 1 / 1;
 }
-h1{
+h1 {
   font-size: 1.5rem;
   margin: 16px;
   margin-bottom: 8px;
   font-family: handwritten_crystal_v2regular;
 }
-button{
+button {
   border:none;
   border-radius:4px;
   padding-left:16px;
@@ -407,10 +407,10 @@ button{
   color: #fff;
   cursor: pointer;
 }
-button:hover{
+button:hover {
   opacity: 0.7;
 }
-button.alt{
+button.alt {
   border:none;
   display: flex;
   border-radius:4px;
@@ -422,16 +422,16 @@ button.alt{
   align-items: center;
   gap: 8px;
 }
-.voice-default{
+.voice-default {
   background-image: url('/assets/Default.png')
 }
-.voice-sassy{
+.voice-sassy {
   background-image: url('/assets/Sassy.png')
 }
-.voice-nerdy{
+.voice-nerdy {
   background-image: url('/assets/Nerdy.png')
 }
-.voice-delusional{
+.voice-delusional {
   background-image: url('/assets/Delusional.png')
 }
 @-webkit-keyframes loader {
@@ -457,67 +457,67 @@ button.alt{
   }
 }
 @media only screen and (max-width: 1024px) {
-  .hide{
-      display: none;
+  .hide {
+    display: none;
   }
-  .col-1{
-      width: 100%;
-      height: 80px;
-      margin: 0;
-      margin-top: 49px;
-      border-radius: 0;
-      display: flex;
-      align-items: center;
-      flex-direction: row;
-      justify-content: flex-start;
-      gap: 0px;
-      position: absolute;
-    }
-    .options{
-      border: none;
-      padding-left:0;
-      padding-right:0;
-      margin-bottom:0;
-      width: 128px;
-      margin: 0;
-    }
-    .col-2{
-      width: 100%;
-      height: calc(100% - 128px);
-      margin-top: auto;
-    }
-    .derp{
-      width: 48px;
-      height: 48px;
-      margin: 8px;
-    }
-    div.content {
-      text-align: left;
-      margin: auto;
-      width: 90vw;
-      max-width: 1280px;
-      background-color: #E9E7D8;
-      border: 3px solid #000000;
-      position: relative;
-      height: calc(100% - 64px);
-      border-radius: 16px;
-      overflow: scroll;
-      margin-top: 32px;
-      margin-bottom: 32px;
-      display: flex;
-      flex-direction: column;
-    }
-    .chat-log{
-      margin-top:16px;
-      height: calc(100% - 158px);
-    }
-    h1{
-      font-size: 1.2rem;
-      margin: 16px;
-      flex-grow: 1;
-    }
-    .v-flex{
-      display: none;
-    }
+  .col-1 {
+    width: 100%;
+    height: 80px;
+    margin: 0;
+    margin-top: 49px;
+    border-radius: 0;
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    justify-content: flex-start;
+    gap: 0px;
+    position: absolute;
+  }
+  .options {
+    border: none;
+    padding-left:0;
+    padding-right:0;
+    margin-bottom:0;
+    width: 128px;
+    margin: 0;
+  }
+  .col-2 {
+    width: 100%;
+    height: calc(100% - 128px);
+    margin-top: auto;
+  }
+  .derp {
+    width: 48px;
+    height: 48px;
+    margin: 8px;
+  }
+  div.content {
+    text-align: left;
+    margin: auto;
+    width: 90vw;
+    max-width: 1280px;
+    background-color: #E9E7D8;
+    border: 3px solid #000000;
+    position: relative;
+    height: calc(100% - 64px);
+    border-radius: 16px;
+    overflow: scroll;
+    margin-top: 32px;
+    margin-bottom: 32px;
+    display: flex;
+    flex-direction: column;
+  }
+  .chat-log {
+    margin-top:16px;
+    height: calc(100% - 158px);
+  }
+  h1 {
+    font-size: 1.2rem;
+    margin: 16px;
+    flex-grow: 1;
+  }
+  .v-flex {
+    display: none;
+  }
 }
 </style>
