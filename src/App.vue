@@ -14,7 +14,16 @@
             <option v-for="(voice, i) in voices.options" :key="'voice-'+i" :value="voice.value">{{voice.name}}</option>
           </select>
         </div>
-        <div :class="['derp', voiceClass]"></div>
+        <div :class="['derp', voiceClass]">
+          <input
+            type="checkbox"
+            v-model="audio"
+            :true-value="true"
+            :false-value="false"
+            name="audio"
+          />
+          <label class="audio-select" for="audio">audio<span v-if="audio">&nbsp;on</span><span v-else>&nbsp;off</span></label>
+        </div>
         <div class="v-flex">
           <a href="https://x.com/Derpies_NFT" target="blank_">
             <button class="alt">X / Twitter</button>
@@ -68,10 +77,21 @@
       </div>
     </div>
   </div>
+
+  <!-- Audio Player -->
+  <div class="audio">
+    <audio id="derp_voice" :autoplay="audio" v-if="audioUrl">
+      <source :src="audioUrl" type="audio/mpeg" />
+    </audio>
+  </div>
 </template>
 
 <script>
 import * as api from './util/api';
+
+const API_URL = process.env.VUE_APP_API_URL;
+const API_AUDIO_PATH = '/static/';
+const API_FILE_EXT = '.mp3';
 
 const VOICE_DEFAULT = 0;
 const VOICE_SASSY = 1;
@@ -96,7 +116,9 @@ export default {
     },
     chatLog: [],
     question: null,
-    audio: true,
+    audio: false,
+    user: "guest", // (for now)
+    audioUrl: null,
     loading: false,
   }),
   computed: {
@@ -130,6 +152,7 @@ export default {
   },
   methods: {
     ask: async function () {
+      this.audioUrl = false;
       this.loading = true;
       if (!this.question) return;
       
@@ -160,11 +183,13 @@ export default {
           message: d.chat
         };
         this.chatLog.push(userChatEntry, apiChatEntry);
+        this.audioUrl = API_URL + API_AUDIO_PATH + this.user + API_FILE_EXT + "?" + new Date().getTime();
+        this.loading = false;
+
         this.$nextTick(() => {
           const elem = document.getElementById('chat-log');
           elem.scrollTop = elem.scrollHeight;
         });
-        this.loading = false;
       } else {
         this.loading = false;
       }
