@@ -15,18 +15,18 @@
           </select>
         </div>
         <div :class="['derp', voiceClass]"></div>
-          <div class="v-flex">
-            <a href="https://x.com/Derpies_NFT" target="blank_">
-              <button class="alt">X / Twitter</button>
-            </a>
-            <a href="https://discord.com/invite/ggfCgapG9P" target="blank_">
-              <button class="alt">Derpcord</button>
-            </a>
-            <a href="https://hub.xyz/derpies" target="blank_">
-              <button class="alt">More Links</button>
-            </a>
-          </div>
+        <div class="v-flex">
+          <a href="https://x.com/Derpies_NFT" target="blank_">
+            <button class="alt">X / Twitter</button>
+          </a>
+          <a href="https://discord.com/invite/ggfCgapG9P" target="blank_">
+            <button class="alt">Derpcord</button>
+          </a>
+          <a href="https://hub.xyz/derpies" target="blank_">
+            <button class="alt">More Links</button>
+          </a>
         </div>
+      </div>
       <div class="col-2">
       <!-- Chat Log -->
       <div class="chat-log" id="chat-log">
