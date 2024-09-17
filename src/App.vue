@@ -1,80 +1,72 @@
 <template>
   <div class="content">
-      <div class="frame">
-        <div class="logo"></div>
+    <div class="frame">
+      <div class="logo"></div>
         <ul>
-            <li class="hide">Friends (0)</li>
-            <li><a href="https://derpies.io" target="blank_">Derpies.io</a></li>
+          <li class="hide">Friends (0)</li>
+          <li><a href="https://derpies.io" target="blank_">Derpies.io</a></li>
         </ul>
       </div>
       <div class="col-1">
         <h1>Derp Profile</h1>
         <div class="options">
-                <select class="form-control question item" v-model="voices.selected">
-                    <option v-for="(voice, i) in voices.options" :key="'voice-'+i" :value="voice.value">{{voice.name}}</option>
-                </select>
+          <select class="form-control question item" v-model="voices.selected">
+            <option v-for="(voice, i) in voices.options" :key="'voice-'+i" :value="voice.value">{{voice.name}}</option>
+          </select>
         </div>
         <div :class="['derp', voiceClass]"></div>
         <div class="v-flex">
         <a href="https://x.com/Derpies_NFT" target="blank_">
-            <button class="alt">
-                X / Twitter
-            </button>
+          <button class="alt">X / Twitter</button>
         </a>
         <a href="https://discord.com/invite/ggfCgapG9P" target="blank_">
-            <button class="alt">
-                Derpcord
-            </button>
+          <button class="alt">Derpcord</button>
         </a>
         <a href="https://hub.xyz/derpies" target="blank_">
-            <button class="alt">
-                More Links
-            </button>
+          <button class="alt">More Links</button>
         </a>
+      </div>
+    </div>
+    <div class="col-2">
+      <!-- Chat Log -->
+      <div class="chat-log" id="chat-log">
+        <div class="chat-item" v-for="(chatEntry, i) in chatLog" :key="'chat-item-'+i">
+          <p 
+            :class="{
+              you: chatEntry.speaker == 'You', 
+              bot: chatEntry.speaker !== 'You', 
+              author: true
+            }" 
+            v-if="chatEntry.speaker"
+          >{{chatEntry.speaker}}<span v-if="chatEntry.style">&nbsp;({{chatEntry.style}})</span>:</p>
+          <p 
+            :class="{
+              message: true, 
+              info: !chatEntry.speaker
+            }" 
+            v-if="chatEntry.message"
+          >{{chatEntry.message}}</p>
+        </div>
+        <div class="loading" v-if="loading">
+          <span></span>
+          <span></span>
+          <span></span>
         </div>
       </div>
-      <div class="col-2">
-        <!-- Chat Log -->
-        <div class="chat-log" id="chat-log">
-          <div class="chat-item" v-for="(chatEntry, i) in chatLog" :key="'chat-item-'+i">
-            <p 
-              :class="{
-                you: chatEntry.speaker == 'You', 
-                bot: chatEntry.speaker !== 'You', 
-                author: true
-              }" 
-              v-if="chatEntry.speaker"
-            >{{chatEntry.speaker}}<span v-if="chatEntry.style">&nbsp;({{chatEntry.style}})</span>:</p>
-            <p 
-              :class="{
-                message: true, 
-                info: !chatEntry.speaker
-              }" 
-              v-if="chatEntry.message"
-            >{{chatEntry.message}}</p>
-          </div>
-          <div class="loading" v-if="loading">
-            <span></span>
-            <span></span>
-            <span></span>
-          </div>
+      <!-- Chat Input -->
+      <div class="chat-input">
+        <div class="h-flex">
+          <input 
+            placeholder="Ask Derpie a question" 
+            class="form-control" 
+            type="text" 
+            name="question" 
+            v-model="question" 
+          />
+          <button class="btn btn-primary" @click="ask()">Send</button>
         </div>
-
-        <!-- Chat Input -->
-        <div class="chat-input">
-            <div class="h-flex">
-                <input 
-                placeholder="Ask Derpie a question" 
-                    class="form-control" 
-                    type="text" 
-                    name="question" 
-                    v-model="question" 
-                  />
-            <button class="btn btn-primary" @click="ask()">Send</button>
-            </div>
-        </div>
-
       </div>
+    </div>
   </div>
 </template>
 
@@ -104,6 +96,7 @@ export default {
     },
     chatLog: [],
     question: null,
+    audio: true,
     loading: false,
   }),
   computed: {
@@ -136,10 +129,6 @@ export default {
     };
   },
   methods: {
-    isUserAtBottom() {
-      const elem = document.getElementById('chat-log');
-      return elem.scrollHeight - elem.scrollTop <= elem.clientHeight + 10; // 10 is a small threshold
-    },
     ask: async function () {
       this.loading = true;
       if (!this.question) return;
@@ -153,6 +142,8 @@ export default {
         question: JSON.parse(question), 
         voice: this.voices.selected
       };
+
+      if (this.audio) req.audio = true;
 
       let resp = await this.api.request.post('/', req);
       let d = (resp.data) ? resp.data : {};
@@ -168,17 +159,10 @@ export default {
           style: this.voices.options[this.voices.selected].name,
           message: d.chat
         };
-
-        const wasAtBottom = this.isUserAtBottom(); // Check if user is at the bottom
         this.chatLog.push(userChatEntry, apiChatEntry);
         this.$nextTick(() => {
-          if (wasAtBottom) { // Only scroll if user was at the bottom
-            const elem = document.getElementById('chat-log');
-            elem.scrollTop = elem.scrollHeight;
-          } else{
           const elem = document.getElementById('chat-log');
-            elem.scrollTop = elem.scrollHeight;
-          }
+          elem.scrollTop = elem.scrollHeight;
         });
         this.loading = false;
       } else {
