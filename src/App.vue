@@ -122,7 +122,7 @@ export default {
     user: "guest", // (for now)
     audioUrl: null,
     loading: false,
-    showdown,
+    converter: new showdown.Converter(),
   }),
   computed: {
     voiceClass() {
@@ -198,11 +198,7 @@ export default {
       }
     },
     sanitized: function (dirty) {
-      console.log("dirty", dirty);
-      const converter = new showdown.Converter();
-      let clean = converter.makeHtml(dirty);
-      console.log("clean", clean);
-      return clean;
+      return this.converter.makeHtml(dirty);
     },
   }
 }
