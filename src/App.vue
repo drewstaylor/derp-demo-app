@@ -3,8 +3,8 @@
     <div class="frame">
       <div class="logo"></div>
         <ul>
-          <li class="hide">Friends (0)</li>
-          <li><a href="https://derpies.io" target="blank_">Derpies.io</a></li>
+          <li class="hide bar">Friends (0)</li>
+          <li class="bar"><a href="https://derpies.io" target="blank_">Derpies.io</a></li>
         </ul>
       </div>
       <div class="col-1">
@@ -40,21 +40,22 @@
       <!-- Chat Log -->
       <div class="chat-log" id="chat-log">
         <div class="chat-item" v-for="(chatEntry, i) in chatLog" :key="'chat-item-'+i">
-          <p 
+          <div 
             :class="{
               you: chatEntry.speaker == 'You', 
               bot: chatEntry.speaker !== 'You', 
               author: true
             }" 
             v-if="chatEntry.speaker"
-          >{{chatEntry.speaker}}<span v-if="chatEntry.style">&nbsp;({{chatEntry.style}})</span>:</p>
-          <p 
+          >{{chatEntry.speaker}}<span v-if="chatEntry.style">&nbsp;({{chatEntry.style}})</span>:</div>
+          <div 
             :class="{
               message: true, 
               info: !chatEntry.speaker
             }" 
             v-if="chatEntry.message"
-          >{{chatEntry.message}}</p>
+            v-html="chatEntry.message"
+          ></div>
         </div>
         <div class="loading" v-if="loading">
           <span></span>
@@ -88,6 +89,7 @@
 
 <script>
 import * as api from './util/api';
+import * as showdown from 'showdown';
 
 const API_URL = process.env.VUE_APP_API_URL;
 const API_AUDIO_PATH = '/static/';
@@ -103,7 +105,7 @@ const VOICES = [VOICE_DEFAULT, VOICE_SASSY, VOICE_NERDY, VOICE_DELUSIONAL];
 export default {
   name: 'Derpies Assistant',
   data: () => ({
-    api: api,
+    api,
     voices: {
       options: [
         {value: VOICE_DEFAULT, name: "Default"},
@@ -120,6 +122,7 @@ export default {
     user: "guest", // (for now)
     audioUrl: null,
     loading: false,
+    showdown,
   }),
   computed: {
     voiceClass() {
@@ -180,7 +183,7 @@ export default {
         let apiChatEntry = {
           speaker: "Derpie",
           style: this.voices.options[this.voices.selected].name,
-          message: d.chat
+          message: this.sanitized(d.chat)
         };
         this.chatLog.push(userChatEntry, apiChatEntry);
         this.audioUrl = API_URL + API_AUDIO_PATH + this.user + API_FILE_EXT + "?" + new Date().getTime();
@@ -193,7 +196,14 @@ export default {
       } else {
         this.loading = false;
       }
-    }
+    },
+    sanitized: function (dirty) {
+      console.log("dirty", dirty);
+      const converter = new showdown.Converter();
+      let clean = converter.makeHtml(dirty);
+      console.log("clean", clean);
+      return clean;
+    },
   }
 }
 
@@ -298,7 +308,7 @@ div.loading span {
   border-bottom: 3px solid #000000;
   z-index: 99;
 }
-.logo{
+.logo {
   width: 128px;
   height: 32px;
   display: block;
@@ -362,19 +372,28 @@ input {
   background: none;
   font-size: 14px;
 }
-p.info {
+.info {
   color: rgba(0,0,0,0.4);
 }
-p.author {
+.author, .message {
+  margin-top: 1em;
+  margin-bottom: 1em;
+}
+.author {
   font-weight: bold;
 }
-p.author.bot {
+.author.bot {
   color: violet;
 }
-p.author.you {
+.author.you {
   color: blue;
 }
-p.author.bot span, p.info {
+.author.bot span, .info {
+  margin-block-start: 1em;
+  margin-block-end: 1em;
+  margin-inline-start: 0px;
+  margin-inline-end: 0px;
+  unicode-bidi: isolate;
   font-style: italic;
 }
 ul {
@@ -383,9 +402,8 @@ ul {
   display: flex;
   flex-direction: horizontal;
 }
-li {
+li.bar {
   color: #fff;
-  
 }
 li a {
   color: #fff;
@@ -544,5 +562,66 @@ button.alt {
   .v-flex {
     display: none;
   }
+}
+code[class*="language-"],
+pre[class*="language-"] {
+	color: black;
+	background: none;
+	text-shadow: 0 1px white;
+	font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+	font-size: 1em;
+	text-align: left;
+	white-space: pre;
+	word-spacing: normal;
+	word-break: normal;
+	word-wrap: normal;
+	line-height: 1.5;
+
+	-moz-tab-size: 4;
+	-o-tab-size: 4;
+	tab-size: 4;
+
+	-webkit-hyphens: none;
+	-moz-hyphens: none;
+	-ms-hyphens: none;
+	hyphens: none;
+}
+
+pre[class*="language-"]::-moz-selection, pre[class*="language-"] ::-moz-selection,
+code[class*="language-"]::-moz-selection, code[class*="language-"] ::-moz-selection {
+	text-shadow: none;
+	background: #b3d4fc;
+}
+
+pre[class*="language-"]::selection, pre[class*="language-"] ::selection,
+code[class*="language-"]::selection, code[class*="language-"] ::selection {
+	text-shadow: none;
+	background: #b3d4fc;
+}
+
+@media print {
+	code[class*="language-"],
+	pre[class*="language-"] {
+		text-shadow: none;
+	}
+}
+
+/* Code blocks */
+pre[class*="language-"] {
+	padding: 1em;
+	margin: .5em 0;
+	overflow: auto;
+}
+
+:not(pre) > code[class*="language-"],
+pre[class*="language-"] {
+	background: #f5f2f0;
+}
+
+/* Inline code */
+:not(pre) > code[class*="language-"] {
+	padding: .1em;
+	border-radius: .3em;
+	white-space: normal;
 }
 </style>
