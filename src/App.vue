@@ -183,7 +183,7 @@ export default {
           message: d.chat
         };
         this.chatLog.push(userChatEntry, apiChatEntry);
-        this.audioUrl = API_URL + API_AUDIO_PATH + this.user + API_FILE_EXT + "?" + new Date().getTime();
+        this.audioUrl = API_URL + API_AUDIO_PATH + this.user + API_FILE_EXT + "?t=" + new Date().getTime();
         this.loading = false;
 
         this.$nextTick(() => {
