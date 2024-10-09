@@ -142,12 +142,15 @@ const API_URL = process.env.VUE_APP_API_URL;
 const API_AUDIO_PATH = '/static/';
 const API_FILE_EXT = '.mp3';
 
+const MAX_CONVERSATION_SIZE = 5;
+
 const VOICE_DEFAULT = 0;
 const VOICE_SASSY = 1;
 const VOICE_NERDY = 2;
 const VOICE_DELUSIONAL = 3;
 
 const VOICES = [VOICE_DEFAULT, VOICE_SASSY, VOICE_NERDY, VOICE_DELUSIONAL];
+
 
 export default {
   name: 'Derpies_AI_Assistant',
@@ -165,6 +168,7 @@ export default {
     },
     chatLog: [],
     question: null,
+    previousQuestions: [],
     audio: false,
     user: null,
     connected: false,
@@ -267,10 +271,11 @@ export default {
       };
 
       if (this.audio) req.audio = true;
+      if (this.previousQuestions.length) req.messages = this.previousQuestions;
+      console.log('req', req);
 
       let resp = await this.api.request.post('/', req);
       let d = (resp.data) ? resp.data : {};
-
       if (d.chat) {
         let userChatEntry = {
           speaker: "You",
@@ -284,6 +289,8 @@ export default {
         };
         this.chatLog.push(userChatEntry, apiChatEntry);
         this.audioUrl = API_URL + API_AUDIO_PATH + this.user + API_FILE_EXT + "?t=" + new Date().getTime();
+        if (this.previousQuestions.length == MAX_CONVERSATION_SIZE) this.previousQuestions.shift();
+        this.previousQuestions.push(JSON.parse(question));
         this.loading = false;
 
         this.$nextTick(() => {
