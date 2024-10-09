@@ -15,14 +15,27 @@
           </select>
         </div>
         <div :class="['derp', voiceClass]">
+        <div v-if="audio">
           <input
+            class="voice-toggle on"
             type="checkbox"
             v-model="audio"
             :true-value="true"
             :false-value="false"
             name="audio"
           />
-          <label class="audio-select" for="audio">audio<span v-if="audio">&nbsp;on</span><span v-else>&nbsp;off</span></label>
+          </div>
+          <div v-else>
+          <input
+            class="voice-toggle off"
+            type="checkbox"
+            v-model="audio"
+            :true-value="true"
+            :false-value="false"
+            name="audio"
+          />
+          </div>
+          <!-- <label class="audio-select" for="audio">audio<span v-if="audio">&nbsp;on</span><span v-else>&nbsp;off</span></label> -->
         </div>
         <div class="v-flex">
           <a href="https://x.com/Derpies_NFT" target="blank_">
@@ -355,6 +368,12 @@ select {
   background-color: #fff;
   border-radius: 8px;
   cursor: pointer;
+  height: 48px;
+  background: url(data:image/svg+xml;base64,PHN2ZyBpZD0iTGF5ZXJfMSIgZGF0YS1uYW1lPSJMYXllciAxIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0Ljk1IDEwIj48ZGVmcz48c3R5bGU+LmNscy0xe2ZpbGw6I2ZmZjt9LmNscy0ye2ZpbGw6IzQ0NDt9PC9zdHlsZT48L2RlZnM+PHRpdGxlPmFycm93czwvdGl0bGU+PHJlY3QgY2xhc3M9ImNscy0xIiB3aWR0aD0iNC45NSIgaGVpZ2h0PSIxMCIvPjxwb2x5Z29uIGNsYXNzPSJjbHMtMiIgcG9pbnRzPSIxLjQxIDQuNjcgMi40OCAzLjE4IDMuNTQgNC42NyAxLjQxIDQuNjciLz48cG9seWdvbiBjbGFzcz0iY2xzLTIiIHBvaW50cz0iMy41NCA1LjMzIDIuNDggNi44MiAxLjQxIDUuMzMgMy41NCA1LjMzIi8+PC9zdmc+) no-repeat 100% 50%;
+    -moz-appearance: none; 
+    -webkit-appearance: none; 
+    appearance: none;
+    background-size: 16px;
 }
 select:hover {
   opacity: 0.5;
@@ -473,6 +492,36 @@ button.alt {
 .voice-delusional {
   background-image: url('/assets/Delusional.png')
 }
+.voice-toggle{
+  display: block;
+  width:48px;
+  height:48px;
+  margin: 8px;
+  position: relative;
+  background-color: none;
+  appearance: none;
+  -webkit-appearance: none;
+}
+.voice-toggle:hover{
+    cursor: pointer;
+}
+.voice-toggle::before{
+  content: " ";
+  display: block;
+  width:48px;
+  height:48px;
+  margin: 8px;
+  position: relative;
+  cursor: pointer;
+}
+.voice-toggle.on::before{
+  background-image: url(/assets/volume-on.svg);
+  background-repeat: no-repeat;
+}
+.voice-toggle.off::before{
+  background-image: url(/assets/volume-off.svg);
+  background-repeat: no-repeat;
+}
 @-webkit-keyframes loader {
   0% {
     opacity: 0.1;
@@ -499,6 +548,20 @@ button.alt {
   .hide {
     display: none;
   }
+  .voice-toggle{
+      display: block;
+      height:48px;
+      margin: 0px;
+      margin-left: 52px;
+      background-color: #fff;
+      border-radius: 8px;
+    }
+  .voice-toggle::before{
+      background-position: center;
+      width: 100%;
+      height: 100%;
+      margin: 0;
+    }
   .col-1 {
     width: 100%;
     height: 80px;
@@ -529,6 +592,7 @@ button.alt {
     width: 48px;
     height: 48px;
     margin: 8px;
+    margin-right: 64px;
   }
   div.content {
     text-align: left;
