@@ -262,7 +262,8 @@ export default {
 
       let req = {
         question: JSON.parse(question), 
-        voice: this.voices.selected
+        voice: this.voices.selected,
+        user: this.user
       };
 
       if (this.audio) req.audio = true;
