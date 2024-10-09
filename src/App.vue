@@ -1,5 +1,39 @@
 <template>
-  <div class="content">
+  <div class="content" v-if="!connected">
+    <div class="frame">
+      <div class="logo"></div>
+      <div class="connect">
+        <p class="login descr">
+          <span v-if="!connecting">Login to Derpies AI</span>
+          <span v-else>Logging into Derpies AI</span>
+        </p>
+        <ul class="connect-opts" v-if="!connecting">
+          <li 
+            class="btn-connect" 
+            @click="connectWallet('keplr')" 
+          >Keplr</li>
+          <li 
+            class="btn-connect" 
+            @click="connectWallet('cosmostation')"
+          >Cosmostation</li>
+          <li 
+            class="btn-connect" 
+            @click="connectWallet('leap')"
+          >Leap</li>
+          <li 
+            class="btn-connect" 
+            @click="connectWallet('metamask')"
+          >MetaMask</li>
+        </ul>
+        <div class="loading connecting" v-else>
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="content" v-else>
     <div class="frame">
       <div class="logo"></div>
         <ul>
@@ -35,7 +69,6 @@
             name="audio"
           />
           </div>
-          <!-- <label class="audio-select" for="audio">audio<span v-if="audio">&nbsp;on</span><span v-else>&nbsp;off</span></label> -->
         </div>
         <div class="v-flex">
           <a href="https://x.com/Derpies_NFT" target="blank_">
@@ -101,6 +134,7 @@
 </template>
 
 <script>
+import { Client, Accounts } from './util/client';
 import * as api from './util/api';
 import * as showdown from 'showdown';
 
@@ -116,7 +150,7 @@ const VOICE_DELUSIONAL = 3;
 const VOICES = [VOICE_DEFAULT, VOICE_SASSY, VOICE_NERDY, VOICE_DELUSIONAL];
 
 export default {
-  name: 'Derpies Assistant',
+  name: 'Derpies_AI_Assistant',
   data: () => ({
     api,
     voices: {
@@ -132,7 +166,11 @@ export default {
     chatLog: [],
     question: null,
     audio: false,
-    user: "guest", // (for now)
+    user: null,
+    connected: false,
+    connecting: false,
+    walletTypes: ['keplr', 'cosmostation', 'leap', 'metamask'],
+    walletType: null,
     audioUrl: null,
     loading: false,
     converter: new showdown.Converter(),
@@ -150,10 +188,13 @@ export default {
     }
   },
   mounted: async function () {
-    this.chatLog.push(
-      {message: "Derpie has entered the chat"},
-      {message: "You entered the chat"},
-    );
+    if (window) {
+      let connected = window.sessionStorage.getItem('connected');
+      if (connected) {
+        this.resumeConnectedState();
+        this.connected = true;
+      }
+    }
 
     // Submit questions using 'Enter' key
     document.onkeypress = (e) => {
@@ -167,6 +208,48 @@ export default {
     };
   },
   methods: {
+    connectWallet: async function (wallet = "keplr") {
+      if (this.walletTypes.indexOf(wallet) == -1) return;
+      this.connecting = true;
+      this.walletType = wallet;
+      try {
+        this.cwClient = await Client(this.walletType);
+        this.accounts = await Accounts(this.cwClient);
+        if (!this.accounts[0].address) return;
+        else this.user = this.accounts[0].address;
+        this.connected = true;
+        this.connecting = false;
+        window.sessionStorage.setItem('connected', this.walletType);
+        this.chatInit();
+      } catch(e) {
+        this.connected = false;
+        this.connecting = false;
+        console.error(e);
+      }
+    },
+    resumeConnectedState: async function (attempts = 0) {
+      if (attempts >= 5) {
+        return;
+      }
+      try {
+        setTimeout(async () => { 
+          let walletType = sessionStorage.getItem("connected");
+          this.cwClient = await Client(walletType);
+          this.accounts = await Accounts(this.cwClient);
+          if (this.accounts[0].address) this.user = this.accounts[0].address;
+          this.chatInit();
+        }, 100);
+      } catch (e) {
+        await this.resumeConnectedState((attempts + 1));
+      }
+    },
+    chatInit: function () {
+      if (!this.user) return;
+      this.chatLog.push(
+        {message: "Derpie has entered the chat"},
+        {message: this.user + " entered the chat"},
+      );
+    },
     ask: async function () {
       this.audioUrl = false;
       this.loading = true;
@@ -220,8 +303,8 @@ export default {
 <style>
 @font-face {
     font-family: 'handwritten_crystal_v2regular';
-    src: url('/fonts/handwritten_crystal_v2-webfont.woff2') format('woff2'),
-         url('/fonts/handwritten_crystal_v2-webfont.woff') format('woff');
+    src: url('/public/fonts/handwritten_crystal_v2-webfont.woff2') format('woff2'),
+         url('/public/fonts/handwritten_crystal_v2-webfont.woff') format('woff');
     font-weight: normal;
     font-style: normal;
 
@@ -242,7 +325,7 @@ body {
   background-color: #8cccb5;
   height: 100vh;
   margin: 0px;
-  background-image: url(/assets/bg.svg);
+  background-image: url(/public/assets/bg.svg);
   background-size: cover;
   background-position: bottom;
   background-repeat: no-repeat;
@@ -264,8 +347,28 @@ div.content {
   flex-direction: horizontal;
   font-size: 16px;
 }
+div.connect {
+  position: absolute;
+}
+p.login.descr {
+  margin-top: 5em;
+  margin-left: 2em;
+}
+ul.connect-opts li {
+  padding: 1rem;
+  margin-right: 0.5em;
+  border-radius: 8px;
+  background-color: rgba(255,255,255,0.3);
+}
+ul.connect-opts li:hover {
+  opacity: 0.75;
+}
 div.loading {
   position: relative;
+}
+div.loading.connecting {
+  position: absolute;
+  left: 2em;
 }
 div.loading span {
   content: "";
@@ -321,7 +424,7 @@ div.loading span {
   width: 128px;
   height: 32px;
   display: block;
-  background-image: url('/assets/logo.svg');
+  background-image: url('/public/assets/logo.svg');
   background-size: cover;
   margin: auto 0;
   margin-left: 16px;
@@ -481,16 +584,16 @@ button.alt {
   gap: 8px;
 }
 .voice-default {
-  background-image: url('/assets/Default.png')
+  background-image: url('/public/assets/Default.png')
 }
 .voice-sassy {
-  background-image: url('/assets/Sassy.png')
+  background-image: url('/public/assets/Sassy.png')
 }
 .voice-nerdy {
-  background-image: url('/assets/Nerdy.png')
+  background-image: url('/public/assets/Nerdy.png')
 }
 .voice-delusional {
-  background-image: url('/assets/Delusional.png')
+  background-image: url('/public/assets/Delusional.png')
 }
 .voice-toggle{
   display: block;
@@ -515,12 +618,16 @@ button.alt {
   cursor: pointer;
 }
 .voice-toggle.on::before{
-  background-image: url(/assets/volume-on.svg);
+  background-image: url(/public/assets/volume-on.svg);
   background-repeat: no-repeat;
 }
 .voice-toggle.off::before{
-  background-image: url(/assets/volume-off.svg);
+  background-image: url(/public/assets/volume-off.svg);
   background-repeat: no-repeat;
+}
+.btn-connect {
+  cursor: pointer;
+  text-decoration: underline;
 }
 @-webkit-keyframes loader {
   0% {
