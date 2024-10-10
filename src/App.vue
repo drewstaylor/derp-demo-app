@@ -2,28 +2,33 @@
   <div class="content" v-if="!connected">
     <div class="frame">
       <div class="logo"></div>
-      <div class="connect">
+      <ul>
+          <li class="bar"><a href="https://derpies.io" target="blank_">Derpies.io</a></li>
+        </ul>
+    </div>
+    <div class="connect">
+        <div class="ascii"></div>
         <p class="login descr">
-          <span v-if="!connecting">Login to Derpies AI</span>
+          <span v-if="!connecting">Welcome to Derpies AI</span>
           <span v-else>Logging into Derpies AI</span>
         </p>
         <ul class="connect-opts" v-if="!connecting">
           <li 
             class="btn-connect" 
             @click="connectWallet('keplr')" 
-          >Keplr</li>
+          ><div class="icon keplr"></div>Keplr</li>
           <li 
             class="btn-connect" 
             @click="connectWallet('cosmostation')"
-          >Cosmostation</li>
+          ><div class="icon cosmostation"></div>Cosmostation</li>
           <li 
             class="btn-connect" 
             @click="connectWallet('leap')"
-          >Leap</li>
+          ><div class="icon leap"></div>Leap</li>
           <li 
             class="btn-connect" 
             @click="connectWallet('metamask')"
-          >MetaMask</li>
+          ><div class="icon metamask"></div>MetaMask</li>
         </ul>
         <div class="loading connecting" v-else>
           <span></span>
@@ -31,7 +36,6 @@
           <span></span>
         </div>
       </div>
-    </div>
   </div>
   <div class="content" v-else>
     <div class="frame">
@@ -39,6 +43,7 @@
         <ul>
           <li class="hide bar">Friends (0)</li>
           <li class="bar"><a href="https://derpies.io" target="blank_">Derpies.io</a></li>
+          <li class="bar logout"><a href="#">Log Out</a></li>
         </ul>
       </div>
       <div class="col-1">
@@ -349,27 +354,77 @@ div.content {
   font-size: 16px;
 }
 div.connect {
-  position: absolute;
+  position: relative;
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+}
+.icon{
+  display: block;
+  width: 24px;
+  height: 24px;
+  margin-right: 8px;
+}
+.icon.keplr{
+ background-image: url(/public/assets/logo-kelpr.png);
+ background-size: contain;
+ background-position: center;
+ background-repeat: no-repeat;
+}
+.icon.metamask{
+ background-image: url(/public/assets/logo-metamask.png);
+ background-size: contain;
+ background-position: center;
+ background-repeat: no-repeat;
+}
+.icon.leap{
+ background-image: url(/public/assets/logo-leap.png);
+ background-size: contain;
+ background-position: center;
+ background-repeat: no-repeat;
+}
+.icon.cosmostation{
+ background-image: url(/public/assets/logo-cosmostation.png);
+ background-size: contain;
+ background-position: center;
+ background-repeat: no-repeat;
 }
 p.login.descr {
-  margin-top: 5em;
-  margin-left: 2em;
+  margin-top: 1em;
+  text-align: center;
+}
+ul.connect-opts{
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  align-items: center;
 }
 ul.connect-opts li {
   padding: 1rem;
-  margin-right: 0.5em;
+  margin-bottom: 0.5em;
   border-radius: 8px;
-  background-color: rgba(255,255,255,0.3);
+  background-color: rgba(255,255,255,1);
+  text-decoration: none;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  max-width: 400px;
+  width: 100%;
 }
 ul.connect-opts li:hover {
   opacity: 0.75;
 }
 div.loading {
   position: relative;
+  margin: auto;
 }
 div.loading.connecting {
-  position: absolute;
-  left: 2em;
+    position: relative;
+    width: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 8px;
 }
 div.loading span {
   content: "";
@@ -399,6 +454,14 @@ div.loading span {
   padding: 1.5em;
   border-radius: 4px;
 }
+div.ascii{
+ width: 600px;
+ height: 150px;
+ background-image: url(/public/assets/ascii.svg);
+ background-size: contain;
+ background-position: center;
+ background-repeat: no-repeat;
+}
 .chat-log {
   margin: 16px;
   margin-top: 64px;
@@ -426,9 +489,11 @@ div.loading span {
   height: 32px;
   display: block;
   background-image: url('/public/assets/logo.svg');
-  background-size: cover;
   margin: auto 0;
   margin-left: 16px;
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
 }
 .chat-input {
 /*  border: 1px solid rgba(0, 0, 0, 0.08); */
@@ -493,6 +558,7 @@ input {
 }
 .info {
   color: rgba(0,0,0,0.4);
+  overflow-wrap: break-word;
 }
 .author, .message {
   margin-top: 1em;
@@ -523,6 +589,9 @@ ul {
 }
 li.bar {
   color: #fff;
+}
+li.bar.logout a{
+  margin-left:0;
 }
 li a {
   color: #fff;
@@ -702,6 +771,9 @@ button.alt {
     margin: 8px;
     margin-right: 64px;
   }
+  div.ascii {
+    width: 280px;
+  }
   div.content {
     text-align: left;
     margin: auto;
@@ -730,6 +802,15 @@ button.alt {
   .v-flex {
     display: none;
   }
+}
+@media only screen and (max-width: 375px) {
+  .logo{
+    width:88px;
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+  }   
+
 }
 code[class*="language-"],
 pre[class*="language-"] {
