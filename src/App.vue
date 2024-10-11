@@ -149,12 +149,13 @@ const API_FILE_EXT = '.mp3';
 
 const MAX_CONVERSATION_SIZE = 5;
 
-const VOICE_DEFAULT = 0;
-const VOICE_SASSY = 1;
-const VOICE_NERDY = 2;
-const VOICE_DELUSIONAL = 3;
+const VOICE_OG = 0;
+const VOICE_BIG_BRAIN = 1;
+const VOICE_SEXY = 2;
+const VOICE_SENSITIVE = 3;
+const VOICE_DRUMP = 4;
 
-const VOICES = [VOICE_DEFAULT, VOICE_SASSY, VOICE_NERDY, VOICE_DELUSIONAL];
+const VOICES = [VOICE_OG, VOICE_BIG_BRAIN, VOICE_SEXY, VOICE_SENSITIVE, VOICE_DRUMP];
 
 
 export default {
@@ -163,13 +164,14 @@ export default {
     api,
     voices: {
       options: [
-        {value: VOICE_DEFAULT, name: "Default"},
-        {value: VOICE_SASSY, name: "Sassy"},
-        {value: VOICE_NERDY, name: "Nerdy"},
-        {value: VOICE_DELUSIONAL, name: "Delusional"},
+        {value: VOICE_OG, name: "OG Derp"},
+        {value: VOICE_BIG_BRAIN, name: "Big Brain Derp"},
+        {value: VOICE_SEXY, name: "Sexy Derp"},
+        {value: VOICE_SENSITIVE, name: "Sensitive Derp"},
+        {value: VOICE_DRUMP, name: "Drump Derp"},
       ],
       list: VOICES,
-      selected: VOICE_DEFAULT
+      selected: VOICE_OG
     },
     chatLog: [],
     question: null,
@@ -188,10 +190,11 @@ export default {
     voiceClass() {
       // Mapping the selected voice value to a class name
       const voiceMap = {
-        [VOICE_DEFAULT]: 'voice-default',
-        [VOICE_SASSY]: 'voice-sassy',
-        [VOICE_NERDY]: 'voice-nerdy',
-        [VOICE_DELUSIONAL]: 'voice-delusional',
+        [VOICE_OG]: 'voice-og',
+        [VOICE_BIG_BRAIN]: 'voice-big-brain',
+        [VOICE_SEXY]: 'voice-sexy',
+        [VOICE_SENSITIVE]: 'voice-sensitive',
+        [VOICE_DRUMP]: 'voice-drump',
       };
       return voiceMap[this.voices.selected] || 'voice-default';
     }
@@ -267,7 +270,7 @@ export default {
       let question = JSON.stringify(this.question);
       this.question = null;
 
-      if (this.voices.list.indexOf(this.voices.selected) == -1) this.voices.selected = VOICE_DEFAULT;
+      if (this.voices.list.indexOf(this.voices.selected) == -1) this.voices.selected = VOICE_OG;
 
       let req = {
         question: JSON.parse(question), 
@@ -277,7 +280,6 @@ export default {
 
       if (this.audio) req.audio = true;
       if (this.previousQuestions.length) req.messages = this.previousQuestions;
-      console.log('req', req);
 
       let resp = await this.api.request.post('/', req);
       let d = (resp.data) ? resp.data : {};
@@ -660,17 +662,20 @@ button.alt {
   align-items: center;
   gap: 8px;
 }
-.voice-default {
+.voice-default, .voice-og {
   background-image: url('/public/assets/Default.png')
 }
-.voice-sassy {
+.voice-sexy {
   background-image: url('/public/assets/Sassy.png')
 }
-.voice-nerdy {
+.voice-big-brain {
   background-image: url('/public/assets/Nerdy.png')
 }
-.voice-delusional {
+.voice-sensitive {
   background-image: url('/public/assets/Delusional.png')
+}
+.voice-drump {
+  background-image: url('/public/assets/Default.png')
 }
 .voice-toggle{
   display: block;
