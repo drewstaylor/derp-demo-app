@@ -43,7 +43,7 @@
         <ul>
           <li class="hide bar">Friends (0)</li>
           <li class="bar"><a href="https://derpies.io" target="blank_">Derpies.io</a></li>
-          <li class="bar logout"><a href="#">Log Out</a></li>
+          <li class="bar logout"><a class="pointer logout" @click="disconnectWallet();">Log Out</a></li>
         </ul>
       </div>
       <div class="col-1">
@@ -254,6 +254,10 @@ export default {
       } catch (e) {
         await this.resumeConnectedState((attempts + 1));
       }
+    },
+    disconnectWallet: async function () {
+      sessionStorage.removeItem("connected");
+      window.location.reload();
     },
     chatInit: function () {
       if (!this.user) return;
@@ -662,20 +666,23 @@ button.alt {
   align-items: center;
   gap: 8px;
 }
+.logout {
+  text-decoration: underline;
+}
 .voice-default, .voice-og {
-  background-image: url('/public/assets/Default.png')
+  background-image: url('/public/assets/OG.png')
 }
 .voice-sexy {
-  background-image: url('/public/assets/Sassy.png')
+  background-image: url('/public/assets/Sexy.png')
 }
 .voice-big-brain {
-  background-image: url('/public/assets/Nerdy.png')
+  background-image: url('/public/assets/Big-Brain.png')
 }
 .voice-sensitive {
-  background-image: url('/public/assets/Delusional.png')
+  background-image: url('/public/assets/Sensitive.png')
 }
 .voice-drump {
-  background-image: url('/public/assets/Default.png')
+  background-image: url('/public/assets/Drump.png')
 }
 .voice-toggle{
   display: block;
@@ -687,7 +694,7 @@ button.alt {
   appearance: none;
   -webkit-appearance: none;
 }
-.voice-toggle:hover{
+.voice-toggle:hover, .pointer {
     cursor: pointer;
 }
 .voice-toggle::before{
