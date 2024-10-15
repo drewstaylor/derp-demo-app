@@ -300,8 +300,14 @@ export default {
         };
         this.chatLog.push(userChatEntry, apiChatEntry);
         this.audioUrl = API_URL + API_AUDIO_PATH + this.user + API_FILE_EXT + "?t=" + new Date().getTime();
+        
         if (this.previousQuestions.length == MAX_CONVERSATION_SIZE) this.previousQuestions.shift();
-        this.previousQuestions.push(JSON.parse(question));
+        let prev = [
+          {"role": "user","content": JSON.parse(question)},
+          {"role": "assistant","content": d.chat}
+        ];
+        this.previousQuestions.push(prev);
+        
         this.loading = false;
 
         this.$nextTick(() => {
