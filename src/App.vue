@@ -49,7 +49,7 @@
       <div class="col-1">
         <h1>Derp Profile</h1>
         <div class="options">
-          <select class="form-control question item" v-model="voices.selected">
+          <select class="form-control question item" v-model="voices.selected" @change="derpieChanged($event);">
             <option v-for="(voice, i) in voices.options" :key="'voice-'+i" :value="voice.value">{{voice.name}}</option>
           </select>
         </div>
@@ -263,7 +263,7 @@ export default {
       if (!this.user) return;
       this.chatLog.push(
         {message: "Derpie has entered the chat"},
-        {message: this.user + " entered the chat"},
+        {message: this.user + " (you) entered the chat"},
       );
     },
     ask: async function () {
@@ -317,6 +317,14 @@ export default {
       } else {
         this.loading = false;
       }
+    },
+    derpieChanged: function (e) {
+      if (!e.target) return;
+      else if (!e.target.value) return;
+      const voice = parseInt(e.target.value);
+      if (this.voices.list.indexOf(voice) == -1) return;
+      // Clear chat history when changing to a new assistant
+      this.previousQuestions = [];
     },
     sanitized: function (dirty) {
       return this.converter.makeHtml(dirty);
