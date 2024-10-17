@@ -691,14 +691,18 @@ button.alt {
   background-image: url('/public/assets/Drump.png')
 }
 .voice-toggle{
-  display: block;
-  width:48px;
-  height:48px;
+  display: flex;
+  width: 48px;
+  height: 48px;
   margin: 8px;
   position: relative;
-  background-color: none;
   appearance: none;
   -webkit-appearance: none;
+  background-color: #fff;
+  border-radius: 8px;
+  align-items: center;
+  justify-content: center;
+  top: 8px;
 }
 .voice-toggle:hover, .pointer {
     cursor: pointer;
@@ -706,8 +710,8 @@ button.alt {
 .voice-toggle::before{
   content: " ";
   display: block;
-  width:48px;
-  height:48px;
+  width:24px;
+  height:24px;
   margin: 8px;
   position: relative;
   cursor: pointer;
@@ -757,6 +761,7 @@ button.alt {
       margin-left: 52px;
       background-color: #fff;
       border-radius: 8px;
+      top: 0;
     }
   .voice-toggle::before{
       background-position: center;
