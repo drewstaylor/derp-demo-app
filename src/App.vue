@@ -54,23 +54,25 @@
           </select>
         </div>
         <div :class="['derp', voiceClass]">
-        <div v-if="audio">
+        <div v-if="audio && voices.list.length">
           <input
             class="voice-toggle on"
             type="checkbox"
             v-model="audio"
             :true-value="true"
             :false-value="false"
+            :disabled="voices.selected == voices.list[voices.list.length-1]"
             name="audio"
           />
           </div>
-          <div v-else>
+        <div v-else>
           <input
             class="voice-toggle off"
             type="checkbox"
             v-model="audio"
             :true-value="true"
             :false-value="false"
+            :disabled="voices.selected == voices.list[voices.list.length-1]"
             name="audio"
           />
           </div>
@@ -282,7 +284,7 @@ export default {
         user: this.user
       };
 
-      if (this.audio) req.audio = true;
+      if (this.audio && this.voices.selected !== VOICE_DRUMP) req.audio = true;
       if (this.previousQuestions.length) req.messages = this.previousQuestions;
 
       let resp = await this.api.request.post('/', req);
@@ -698,7 +700,7 @@ button.alt {
 .voice-drump {
   background-image: url('/public/assets/Drump.png')
 }
-.voice-toggle{
+.voice-toggle {
   display: flex;
   width: 48px;
   height: 48px;
@@ -715,7 +717,7 @@ button.alt {
 .voice-toggle:hover, .pointer {
     cursor: pointer;
 }
-.voice-toggle::before{
+.voice-toggle::before {
   content: " ";
   display: block;
   width:24px;
@@ -724,13 +726,17 @@ button.alt {
   position: relative;
   cursor: pointer;
 }
-.voice-toggle.on::before{
+.voice-toggle.on::before {
   background-image: url(/public/assets/volume-on.svg);
   background-repeat: no-repeat;
 }
-.voice-toggle.off::before{
+.voice-toggle.off::before {
   background-image: url(/public/assets/volume-off.svg);
   background-repeat: no-repeat;
+}
+.voice-toggle:disabled, .voice-toggle:disabled::before {
+  opacity: 0.75;
+  cursor: not-allowed;
 }
 .btn-connect {
   cursor: pointer;
