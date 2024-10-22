@@ -53,30 +53,36 @@
             <option v-for="(voice, i) in voices.options" :key="'voice-'+i" :value="voice.value">{{voice.name}}</option>
           </select>
         </div>
-        <div :class="['derp', voiceClass]">
-        <div v-if="audio && voices.list.length">
-          <input
-            class="voice-toggle on"
-            type="checkbox"
-            v-model="audio"
-            :true-value="true"
-            :false-value="false"
-            :disabled="voices.selected == voices.list[voices.list.length-1]"
-            name="audio"
-          />
+        <div :class="['derp', voiceClass]" v-if="!animating">
+          <div v-if="audio && voices.list.length">
+            <input
+              class="voice-toggle on"
+              type="checkbox"
+              v-model="audio"
+              :true-value="true"
+              :false-value="false"
+              :disabled="voices.selected == voices.list[voices.list.length-1]"
+              name="audio"
+            />
           </div>
-        <div v-else>
-          <input
-            class="voice-toggle off"
-            type="checkbox"
-            v-model="audio"
-            :true-value="true"
-            :false-value="false"
-            :disabled="voices.selected == voices.list[voices.list.length-1]"
-            name="audio"
-          />
+          <div v-else>
+            <input
+              class="voice-toggle off"
+              type="checkbox"
+              v-model="audio"
+              :true-value="true"
+              :false-value="false"
+              :disabled="voices.selected == voices.list[voices.list.length-1]"
+              name="audio"
+            />
           </div>
         </div>
+        <div class="derp animation" v-else>
+          <Vue3Lottie
+            :animationLink="voices.animations[voices.selected]"
+          />
+        </div>
+
         <div class="v-flex">
           <a href="https://x.com/Derpies_NFT" target="blank_">
             <button class="alt">X / Twitter</button>
@@ -134,7 +140,7 @@
 
   <!-- Audio Player -->
   <div class="audio">
-    <audio id="derp_voice" :autoplay="audio" v-if="audioUrl">
+    <audio id="derp_voice" :autoplay="audio" v-if="audioUrl" :key="audioRender">
       <source :src="audioUrl" type="audio/mpeg" />
     </audio>
   </div>
@@ -142,8 +148,11 @@
 
 <script>
 import { Client, Accounts } from './util/client';
+import { Vue3Lottie } from 'vue3-lottie';
 import * as api from './util/api';
 import * as showdown from 'showdown';
+
+import 'vue3-lottie/dist/style.css'
 
 const API_URL = process.env.VUE_APP_API_URL;
 const API_AUDIO_PATH = '/static/';
@@ -159,9 +168,17 @@ const VOICE_DRUMP = 4;
 
 const VOICES = [VOICE_OG, VOICE_BIG_BRAIN, VOICE_SEXY, VOICE_SENSITIVE, VOICE_DRUMP];
 
+const ANIMATION_OG = '/assets/animation/og.json';
+const ANIMATION_BIG_BRAIN = '/assets/animation/bigbrain.json';
+const ANIMATION_SEXY = '/assets/animation/sexy.json';
+const ANIMATION_SENSITIVE = '/assets/animation/sensitive.json';
+const ANIMATION_DRUMP = '/assets/animation/drump.json';
+
+const ANIMATIONS = [ANIMATION_OG, ANIMATION_BIG_BRAIN, ANIMATION_SEXY, ANIMATION_SENSITIVE, ANIMATION_DRUMP];
 
 export default {
   name: 'Derpies_AI_Assistant',
+  components: { Vue3Lottie },
   data: () => ({
     api,
     voices: {
@@ -172,6 +189,7 @@ export default {
         {value: VOICE_SENSITIVE, name: "Sensitive Derp"},
         {value: VOICE_DRUMP, name: "Drump Derp"},
       ],
+      animations: ANIMATIONS,
       list: VOICES,
       selected: VOICE_OG
     },
@@ -179,12 +197,14 @@ export default {
     question: null,
     previousQuestions: [],
     audio: false,
+    audioUrl: null,
+    audioRender: 0,
+    animating: false,
     user: null,
     connected: false,
     connecting: false,
     walletTypes: ['keplr', 'cosmostation', 'leap', 'metamask'],
     walletType: null,
-    audioUrl: null,
     loading: false,
     converter: new showdown.Converter(),
   }),
@@ -270,6 +290,7 @@ export default {
     },
     ask: async function () {
       this.audioUrl = false;
+      this.animating = false;
       this.loading = true;
       if (!this.question) return;
       
@@ -301,7 +322,12 @@ export default {
           message: this.sanitized(d.chat)
         };
         this.chatLog.push(userChatEntry, apiChatEntry);
-        this.audioUrl = API_URL + API_AUDIO_PATH + this.user + API_FILE_EXT + "?t=" + new Date().getTime();
+
+        if (this.audio) {
+          this.audioUrl = API_URL + API_AUDIO_PATH + this.user + API_FILE_EXT + "?t=" + new Date().getTime();
+          ++this.audioRender;
+          this.animating = true;
+        }
         
         if (this.previousQuestions.length == MAX_CONVERSATION_SIZE) this.previousQuestions.shift();
         let prev = [
@@ -313,6 +339,17 @@ export default {
         this.loading = false;
 
         this.$nextTick(() => {
+          if (this.audio) {
+            // XXX TODO: Fix this hacky nonsense
+            // if anyone else reads this, pity me...
+            setTimeout(()=> {
+              const player = document.getElementById('derp_voice');
+              setTimeout(()=>{
+                this.animating = false;
+              }, (player.duration * 1000)-1000);
+            }, 1000);
+          }
+
           const elem = document.getElementById('chat-log');
           elem.scrollTop = elem.scrollHeight;
         });
@@ -327,6 +364,8 @@ export default {
       if (this.voices.list.indexOf(voice) == -1) return;
       // Clear chat history when changing to a new assistant
       this.previousQuestions = [];
+      // Disable voice if Drump
+      if (voice == this.voices.list[this.voices.list.length-1]) this.audio = false;
     },
     sanitized: function (dirty) {
       return this.converter.makeHtml(dirty);
