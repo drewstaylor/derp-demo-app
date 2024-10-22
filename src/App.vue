@@ -77,7 +77,7 @@
             />
           </div>
         </div>
-        <div class="derp animation" v-else>
+        <div :class="['derp','animation', voiceClass]" v-else>
           <Vue3Lottie
             :animationLink="voices.animations[voices.selected]"
           />
