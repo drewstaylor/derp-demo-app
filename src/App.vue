@@ -78,6 +78,28 @@
           </div>
         </div>
         <div :class="['derp','animation', voiceClass]" v-else>
+        <div v-if="audio && voices.list.length">
+            <input
+              class="voice-toggle on"
+              type="checkbox"
+              v-model="audio"
+              :true-value="true"
+              :false-value="false"
+              name="audio"
+              disabled
+            />
+          </div>
+          <div v-else>
+            <input
+              class="voice-toggle off"
+              type="checkbox"
+              v-model="audio"
+              :true-value="true"
+              :false-value="false"
+              name="audio"
+              disabled
+            />
+          </div>
           <Vue3Lottie
             :animationLink="voices.animations[voices.selected]"
           />
@@ -563,6 +585,44 @@ div.ascii{
   background-position: center;
   background-repeat: no-repeat;
 }
+.lottie-animation-container{
+  border-radius: 16px;
+  overflow: hidden;
+  position: absolute;
+  left:0;
+  top:0;
+}
+.voice-toggle::after{
+  display:none;
+  content:'';
+  position:absolute;
+  top:52px;
+  left:0px;
+  padding:8px 8px;
+  background:#1a1a1a;
+  color:#fff;
+  z-index:9;
+  font-size: 1em;
+  height:18px;
+  line-height:18px;
+  -webkit-border-radius: 8px;
+  -moz-border-radius: 8px;
+  border-radius: 8px;
+  white-space:nowrap;
+  word-wrap:normal;
+  opacity: 1;
+}
+.voice-toggle:disabled {
+  background-color: rgba(255,255,255,0.55);
+  cursor: not-allowed;
+}
+.voice-toggle:disabled::before{
+  opacity: 0.2;
+}
+.voice-drump .voice-toggle:disabled:hover::after{
+  display: block;
+  content:'Coming Soon!';
+}
 .chat-input {
 /*  border: 1px solid rgba(0, 0, 0, 0.08); */
   border-radius: 8px;
@@ -690,6 +750,7 @@ li a {
   border-radius: 8px;
   background-position: center;
   aspect-ratio : 1 / 1;
+  position:relative;
 }
 h1 {
   font-size: 1.5rem;
@@ -752,6 +813,7 @@ button.alt {
   align-items: center;
   justify-content: center;
   top: 8px;
+  z-index:1;
 }
 .voice-toggle:hover, .pointer {
     cursor: pointer;
@@ -773,8 +835,8 @@ button.alt {
   background-image: url(/public/assets/volume-off.svg);
   background-repeat: no-repeat;
 }
-.voice-toggle:disabled, .voice-toggle:disabled::before {
-  opacity: 0.75;
+.voice-toggle:disabled {
+  opacity: 1;
   cursor: not-allowed;
 }
 .btn-connect {
@@ -831,17 +893,23 @@ button.alt {
     display: flex;
     align-items: center;
     flex-direction: row;
-    justify-content: flex-start;
+    justify-content: space-between;
     gap: 0px;
     position: absolute;
+    overflow: visible;
+    z-index: 1;
   }
   .options {
     border: none;
-    padding-left:0;
     padding-right:0;
     margin-bottom:0;
     width: 128px;
     margin: 0;
+    margin-left: 16px;
+  }
+  .voice-toggle::after{
+  right:0;
+  left: auto;
   }
   .col-2 {
     width: 100%;
@@ -881,6 +949,7 @@ button.alt {
     font-size: 1.2rem;
     margin: 16px;
     flex-grow: 1;
+    display: none;
   }
   .v-flex {
     display: none;
