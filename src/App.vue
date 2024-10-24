@@ -53,56 +53,24 @@
             <option v-for="(voice, i) in voices.options" :key="'voice-'+i" :value="voice.value">{{voice.name}}</option>
           </select>
         </div>
-        <div :class="['derp', voiceClass]" v-if="!animating">
-          <div v-if="audio && voices.list.length">
+        <div :class="['derp', voiceClass, (animating) ? 'animating' : '']">
+          <div>
             <input
-              class="voice-toggle on"
+              :class="{
+                'voice-toggle': true, 
+                'on': audio && voices.list.length, 
+                'off': !audio || !voices.list.length
+              }"
               type="checkbox"
-              v-model="audio"
-              :true-value="true"
-              :false-value="false"
+              @click="toggleVolume();"
               :disabled="voices.selected == voices.list[voices.list.length-1]"
               name="audio"
             />
-          </div>
-          <div v-else>
-            <input
-              class="voice-toggle off"
-              type="checkbox"
-              v-model="audio"
-              :true-value="true"
-              :false-value="false"
-              :disabled="voices.selected == voices.list[voices.list.length-1]"
-              name="audio"
+            <Vue3Lottie
+              :animationLink="voices.animations[voices.selected]"
+              v-if="animating"
             />
           </div>
-        </div>
-        <div :class="['derp','animation', voiceClass]" v-else>
-        <div v-if="audio && voices.list.length">
-            <input
-              class="voice-toggle on"
-              type="checkbox"
-              v-model="audio"
-              :true-value="true"
-              :false-value="false"
-              name="audio"
-              disabled
-            />
-          </div>
-          <div v-else>
-            <input
-              class="voice-toggle off"
-              type="checkbox"
-              v-model="audio"
-              :true-value="true"
-              :false-value="false"
-              name="audio"
-              disabled
-            />
-          </div>
-          <Vue3Lottie
-            :animationLink="voices.animations[voices.selected]"
-          />
         </div>
 
         <div class="v-flex">
@@ -378,6 +346,19 @@ export default {
       } else {
         this.loading = false;
       }
+    },
+    toggleVolume: function () {
+      // Halt animation and speech preemptively (as required)
+      if (this.animating) {
+        this.animating = false;
+        try {
+          const player = document.getElementById('derp_voice');
+          player.pause();
+        } catch (e) {
+          console.warn(e);
+        }
+      }
+      return this.audio = !this.audio;
     },
     derpieChanged: function (e) {
       if (!e.target) return;
