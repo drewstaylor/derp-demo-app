@@ -41,7 +41,6 @@
     <div class="frame">
       <div class="logo"></div>
         <ul>
-          <li class="hide bar">Friends (0)</li>
           <li class="bar"><a href="https://derpies.io" target="blank_">Derpies.io</a></li>
           <li class="bar logout"><a class="pointer logout" @click="disconnectWallet();">Log Out</a></li>
         </ul>
