@@ -126,7 +126,7 @@
       </div>
     </div>
   </div>
-
+  <p class="disclaimer"> derpies.ai v0.69 is learning everyday and can make dumb mistakes. sometimes this alpha version can go full derp.</p>
   <!-- Audio Player -->
   <div class="audio">
     <audio id="derp_voice" :autoplay="audio" v-if="audioUrl" :key="audioRender">
@@ -414,11 +414,11 @@ div.content {
   background-color: #E9E7D8;
   border: 3px solid #000000;
   position: relative;
-  height: calc(100% - 64px);
+  height: calc(100% - 80px);
   border-radius: 16px;
   overflow: hidden;
   margin-top: 32px;
-  margin-bottom: 32px;
+  margin-bottom: 12px;
   display: flex;
   flex-direction: horizontal;
   font-size: 16px;
@@ -823,6 +823,12 @@ button.alt {
   cursor: pointer;
   text-decoration: underline;
 }
+.disclaimer{
+  margin-top: 0;
+  margin-bottom: 0;
+  font-size: 12.5px;
+  color: rgba(255, 255, 255, 0.6);
+}
 @-webkit-keyframes loader {
   0% {
     opacity: 0.1;
@@ -913,11 +919,11 @@ button.alt {
     background-color: #E9E7D8;
     border: 3px solid #000000;
     position: relative;
-    height: calc(100% - 64px);
+    height: calc(100% - 96px);
     border-radius: 16px;
     overflow: scroll;
     margin-top: 32px;
-    margin-bottom: 32px;
+    margin-bottom: 12px;
     display: flex;
     flex-direction: column;
   }
@@ -935,14 +941,20 @@ button.alt {
     display: none;
   }
 }
-@media only screen and (max-width: 375px) {
+@media only screen and (max-width: 440px) {
   .logo{
     width:88px;
     background-size: contain;
     background-position: center;
     background-repeat: no-repeat;
-  }   
-
+  }
+  li a{
+    margin-left:0;
+    margin-right:8px;
+  }
+  ul{
+    padding: 0;
+  }
 }
 code[class*="language-"],
 pre[class*="language-"] {
