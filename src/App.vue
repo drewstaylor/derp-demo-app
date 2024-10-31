@@ -15,19 +15,19 @@
         <ul class="connect-opts" v-if="!connecting">
           <li 
             class="btn-connect" 
-            @click="connectWallet('keplr')" 
+            @click="connectWallet('keplr');" 
           ><div class="icon keplr"></div>Keplr</li>
           <li 
             class="btn-connect" 
-            @click="connectWallet('cosmostation')"
+            @click="connectWallet('cosmostation');"
           ><div class="icon cosmostation"></div>Cosmostation</li>
           <li 
             class="btn-connect" 
-            @click="connectWallet('leap')"
+            @click="connectWallet('leap');"
           ><div class="icon leap"></div>Leap</li>
           <li 
             class="btn-connect" 
-            @click="connectWallet('metamask')"
+            @click="connectWallet('metamask');"
           ><div class="icon metamask"></div>MetaMask</li>
         </ul>
         <div class="loading connecting" v-else>
@@ -121,7 +121,8 @@
             name="question" 
             v-model="question" 
           />
-          <button class="btn btn-primary" @click="ask()">Send</button>
+          <span class="reroll" v-if="previousQuestions.length" @click="reRoll();">&#10227;</span>
+          <button class="btn btn-primary" @click="ask();">Send</button>
         </div>
       </div>
     </div>
@@ -277,13 +278,13 @@ export default {
         {message: this.user + " (you) entered the chat"},
       );
     },
-    ask: async function () {
+    ask: async function (q = null) {
       this.audioUrl = false;
       this.animating = false;
       this.loading = true;
-      if (!this.question) return;
-      
-      let question = JSON.stringify(this.question);
+      if (!this.question && !q) return;
+      q = (q) ? q : this.question;
+      let question = JSON.stringify(q);
       this.question = null;
 
       if (this.voices.list.indexOf(this.voices.selected) == -1) this.voices.selected = VOICE_OG;
@@ -345,6 +346,16 @@ export default {
       } else {
         this.loading = false;
       }
+    },
+    reRoll: function () {
+      if (!this.previousQuestions) return;
+      if (!this.previousQuestions.length) return;
+      let lastRoll = this.previousQuestions.pop();
+      let lastQuestion = lastRoll.reduce((item) => {
+        if (item.role == 'user') return item;
+      });
+      this.previousQuestions = [];
+      this.ask(lastQuestion.content);
     },
     toggleVolume: function () {
       // Halt animation and speech preemptively (as required)
@@ -737,6 +748,14 @@ h1 {
   margin: 16px;
   margin-bottom: 8px;
   font-family: handwritten_crystal_v2regular;
+}
+span.reroll {
+  padding: 0.5em;
+  font-size: 22px;
+  line-height: 0;
+  position: relative;
+  top: 4px;
+  cursor: pointer;
 }
 button {
   border:none;
